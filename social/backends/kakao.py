@@ -12,6 +12,15 @@ class KakaoOAuth2(BaseOAuth2):
     ACCESS_TOKEN_URL = 'https://kauth.kakao.com/oauth/token'
     ACCESS_TOKEN_METHOD = 'POST'
 
+    def __init__(self, strategy=None, redirect_uri=None, *args, **kwargs):
+        """ Kakao RESTful API's redirect_uri should be '/oauth' """
+        super(KakaoOAuth2, self).__init__(strategy, redirect_uri,
+                                          *args, **kwargs)
+        if self.strategy:
+            self.redirect_uri = self.strategy.absolute_uri(
+                '/oauth/kakao/'
+            )
+
     def get_user_id(self, details, response):
         return response['id']
 
@@ -23,7 +32,7 @@ class KakaoOAuth2(BaseOAuth2):
         return {
             'username': nickname,
             'email': '',
-            'fullname': '',
+            'fullname': nickname,
             'first_name': '',
             'last_name': ''
         }
