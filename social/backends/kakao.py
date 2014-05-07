@@ -37,6 +37,17 @@ class KakaoOAuth2(BaseOAuth2):
             'last_name': ''
         }
 
+    def extra_data(self, user, uid, response, details=None):
+        data = super(KakaoOAuth2, self).extra_data(user, uid, response,
+                                                   details)
+        thumbnail_image = response['properties']['thumbnail_image']
+        profile_image = response['properties']['profile_image']
+        if thumbnail_image != None:
+            data['thumbnail_image'] = thumbnail_image
+            if profile_image != None:
+                data['profile_image'] = profile_image
+                return data
+
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         return self.get_json('https://kapi.kakao.com/v1/user/me',
